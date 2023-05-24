@@ -13,7 +13,7 @@ const typeorm_1 = require("@nestjs/typeorm");
 const auth_service_1 = require("./auth.service");
 const local_serializer_1 = require("./local.serializer");
 const local_strategy_1 = require("./local.strategy");
-const User_1 = require("src/entities/User");
+const User_1 = require("../entities/User");
 let AuthModule = class AuthModule {
 };
 AuthModule = __decorate([

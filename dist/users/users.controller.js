@@ -21,22 +21,16 @@ const logged_in_guard_1 = require("../auth/logged-in.guard");
 const CurrentUser_decorator_1 = require("../common/decorators/CurrentUser.decorator");
 const join_request_dto_1 = require("./dto/join.request.dto");
 const users_service_1 = require("./users.service");
-const User_1 = require("src/entities/User");
+const User_1 = require("../entities/User");
 let UsersController = class UsersController {
-    usersService;
     constructor(usersService) {
         this.usersService = usersService;
     }
     async getProfile(user) {
         return user || false;
     }
-    async join(data) {
-        const user = this.usersService.findByEmail(data.email);
-        if (!user) {
-            throw new common_1.NotFoundException();
-        }
-        const result = await this.usersService.join(data.email, data.nickname, data.password);
-        return result;
+    async join(req) {
+        const user = this.usersService.join(req);
     }
     async login(user) {
         return user;
@@ -48,7 +42,7 @@ let UsersController = class UsersController {
 };
 __decorate([
     (0, swagger_1.ApiCookieAuth)('connect.sid'),
-    (0, swagger_1.ApiOperation)({ summary: '내 정보 가져오기' }),
+    (0, swagger_1.ApiOperation)({ summary: 'currentUser' }),
     (0, common_1.Get)(),
     __param(0, (0, CurrentUser_decorator_1.currentUser)()),
     __metadata("design:type", Function),
@@ -56,7 +50,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "getProfile", null);
 __decorate([
-    (0, swagger_1.ApiOperation)({ summary: '회원가입' }),
+    (0, swagger_1.ApiOperation)({ summary: 'join' }),
     (0, common_1.UseGuards)(not_logged_in_guard_1.NotLoggedInGuard),
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
@@ -65,7 +59,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "join", null);
 __decorate([
-    (0, swagger_1.ApiOperation)({ summary: '로그인' }),
+    (0, swagger_1.ApiOperation)({ summary: 'login' }),
     (0, common_1.UseGuards)(local_auth_guard_1.LocalAuthGuard),
     (0, common_1.Post)('login'),
     __param(0, (0, CurrentUser_decorator_1.currentUser)()),
@@ -75,7 +69,7 @@ __decorate([
 ], UsersController.prototype, "login", null);
 __decorate([
     (0, swagger_1.ApiCookieAuth)('connect.sid'),
-    (0, swagger_1.ApiOperation)({ summary: '로그아웃' }),
+    (0, swagger_1.ApiOperation)({ summary: 'logout' }),
     (0, common_1.UseGuards)(logged_in_guard_1.LoggedInGuard),
     (0, common_1.Post)('logout'),
     __param(0, (0, common_1.Response)()),

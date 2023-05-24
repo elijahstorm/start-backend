@@ -13,14 +13,11 @@ exports.JoinRequestDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
 class JoinRequestDto {
-    email;
-    nickname;
-    password;
 }
 __decorate([
     (0, class_validator_1.IsEmail)(),
     (0, swagger_1.ApiProperty)({
-        example: 'zerohch0@gmail.com',
+        example: '1111@gmail.com',
         description: '이메일',
     }),
     __metadata("design:type", String)
@@ -29,7 +26,7 @@ __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
     (0, swagger_1.ApiProperty)({
-        example: '제로초',
+        example: 'nickname',
         description: '닉네임',
     }),
     __metadata("design:type", String)
@@ -38,7 +35,6 @@ __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
     (0, swagger_1.ApiProperty)({
-        example: 'nodejsbook',
         description: '비밀번호',
     }),
     __metadata("design:type", String)

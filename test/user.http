@@ -1,0 +1,20 @@
+###회원가입하기
+POST http://localhost:3001/api/users/join HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+
+{
+    "email" : "kikiplus1@naver.com",
+    "nickname" : "kkik",
+    "password" : "12323",
+    "first_name" : "ss",
+    "last_name" : "ss"
+}
+
+###회원가입하기
+POST http://localhost:3001/api/users/login HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+
+{
+    "email" : "kikiplus1@naver.com",
+    "password" : "12323",
+}

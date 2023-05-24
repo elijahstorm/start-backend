@@ -16,20 +16,32 @@ exports.UsersService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const user_repository_1 = require("./Repository/user.repository");
+const User_1 = require("../entities/User");
 let UsersService = class UsersService {
-    usersRepository;
-    constructor(usersRepository) {
+    constructor(usersRepository, user) {
         this.usersRepository = usersRepository;
+        this.user = user;
     }
-    async findByEmail(email) {
-    }
-    async join(email, nickname, password) {
+    async join(req) {
+        try {
+            let user = await this.usersRepository.findOne({ email: req.email });
+            if (user) {
+                throw new common_1.HttpException('already-exists', 400);
+            }
+            const joinInfo = this.user.join(req.email, req.password, req.nickname);
+            await this.usersRepository.save(joinInfo);
+            return joinInfo;
+        }
+        catch (err) {
+            throw new common_1.HttpException(err, 400);
+        }
     }
 };
 UsersService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(user_repository_1.UserRepository)),
-    __metadata("design:paramtypes", [user_repository_1.UserRepository])
+    __metadata("design:paramtypes", [user_repository_1.UserRepository,
+        User_1.User])
 ], UsersService);
 exports.UsersService = UsersService;
 //# sourceMappingURL=users.service.js.map

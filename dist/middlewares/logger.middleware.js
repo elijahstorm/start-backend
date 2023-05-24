@@ -9,7 +9,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.LoggerMiddleware = void 0;
 const common_1 = require("@nestjs/common");
 let LoggerMiddleware = class LoggerMiddleware {
-    logger = new common_1.Logger('HTTP');
+    constructor() {
+        this.logger = new common_1.Logger('HTTP');
+    }
     use(request, response, next) {
         const { ip, method, originalUrl } = request;
         const userAgent = request.get('user-agent') || '';

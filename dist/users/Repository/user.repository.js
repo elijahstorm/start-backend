@@ -7,8 +7,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserRepository = void 0;
-const User_1 = require("src/entities/User");
 const typeorm_1 = require("typeorm");
+const User_1 = require("../../entities/User");
 let UserRepository = class UserRepository extends typeorm_1.Repository {
     findAllUser(uid, partyid) {
         const queryBuilder = this.createQueryBuilder('u');

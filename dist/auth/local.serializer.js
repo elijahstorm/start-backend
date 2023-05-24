@@ -17,10 +17,8 @@ const common_1 = require("@nestjs/common");
 const passport_1 = require("@nestjs/passport");
 const typeorm_1 = require("@nestjs/typeorm");
 const auth_service_1 = require("./auth.service");
-const user_repository_1 = require("src/users/Repository/user.repository");
+const user_repository_1 = require("../users/Repository/user.repository");
 let LocalSerializer = class LocalSerializer extends passport_1.PassportSerializer {
-    authService;
-    usersRepository;
     constructor(authService, usersRepository) {
         super();
         this.authService = authService;
