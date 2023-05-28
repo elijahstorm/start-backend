@@ -5,6 +5,8 @@
 /err
 .env
 /dist
+/docker
+/db
 
 # Logs
 logs
