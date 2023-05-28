@@ -3,6 +3,8 @@
 /node_modules
 /log
 /err
+.env
+/dist
 
 # Logs
 logs
