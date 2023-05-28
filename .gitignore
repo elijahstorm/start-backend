@@ -4,6 +4,7 @@
 /log
 /err
 .env
+.env*
 /dist
 /docker
 /db
