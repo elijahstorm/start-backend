@@ -10,11 +10,15 @@ Content-Type: application/json;charset=UTF-8
     "last_name" : "ss"
 }
 
-###회원가입하기
+###로그인하기
 POST http://localhost:3001/api/users/login HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 
 {
     "email" : "kikiplus1@naver.com",
-    "password" : "12323",
+    "password" : "12323"
 }
+
+###로그아웃하기
+POST http://localhost:3001/api/users/logout HTTP/1.1
+Content-Type: application/json;charset=UTF-8

@@ -1,13 +1,12 @@
 import {
   Body,
   Controller,
-  NotFoundException,
   Post,
   UseGuards,
   Get,
   Response
 } from '@nestjs/common';
-import { ApiAcceptedResponse, ApiBadRequestResponse, ApiCookieAuth, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiResponseProperty, ApiTags } from '@nestjs/swagger';
+import { ApiAcceptedResponse, ApiBadRequestResponse, ApiCookieAuth, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiResponseProperty, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { LocalAuthGuard } from '../auth/local-auth.guard';
 import { NotLoggedInGuard } from '../auth/not-logged-in.guard';
 import { LoggedInGuard } from '../auth/logged-in.guard';
@@ -17,6 +16,7 @@ import { JoinRequestDto } from './dto/user.request.dto';
 import { UsersService } from './users.service';
 import { User } from 'src/entities/User';
 import { returnErrorResponse, returnResponse } from 'src/common/dto/user.dto';
+import { Return } from 'src/common/Enum';
 
 @ApiTags('USERS')
 @Controller('api/users')
@@ -36,17 +36,21 @@ export class UsersController {
   @ApiCreatedResponse({type : returnResponse, description : ' result is undefined'})
   @ApiBadRequestResponse({
     description : `
-    10000 : already exist email error,
-    10001 : already exist nickname error`, type : returnErrorResponse })
+    10000 : already exist email error`, type : returnErrorResponse })
   async join(@Body() req: JoinRequestDto) {
     return await this.usersService.join(req);
   }
 
   @ApiOperation({ summary: 'login' })
   @UseGuards(LocalAuthGuard)
+  @ApiUnauthorizedResponse()
+  @ApiBadRequestResponse({
+    description : `
+    11000 : fail login,
+    11001 : not email validated`, type : returnErrorResponse })
   @Post('login')
   async login(@currentUser() user: User) {
-    return user;
+    return new returnResponse(Return.OK, user);
   }
 
 

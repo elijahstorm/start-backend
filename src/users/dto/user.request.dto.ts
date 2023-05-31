@@ -12,14 +12,6 @@ export class JoinRequestDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
-    example: 'nickname',
-    description: '닉네임',
-  })
-  public nickname: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({
     description: 'password(decrypted)',
   })
   public password: string;
