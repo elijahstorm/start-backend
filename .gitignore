@@ -5,7 +5,7 @@
 /err
 .env
 .env*
-/dist
+/dist*
 /docker
 /db
 
