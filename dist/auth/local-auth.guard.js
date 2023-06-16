@@ -14,7 +14,6 @@ let LocalAuthGuard = class LocalAuthGuard extends (0, passport_1.AuthGuard)('loc
         const can = await super.canActivate(context);
         if (can) {
             const request = context.switchToHttp().getRequest();
-            console.log('login for cookie');
             await super.logIn(request);
         }
         return true;

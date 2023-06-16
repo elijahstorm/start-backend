@@ -14,11 +14,13 @@ exports.User = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("typeorm");
 let User = User_1 = class User {
-    join(email, password, nickname) {
+    join(email, password, nickname, first_name, last_name) {
         const user = new User_1;
         user.email = email;
         user.password = password;
         user.nickname = nickname;
+        user.first_name = first_name;
+        user.last_name = last_name;
         return user;
     }
 };
@@ -27,33 +29,29 @@ __decorate([
     __metadata("design:type", Number)
 ], User.prototype, "uid", void 0);
 __decorate([
-    (0, typeorm_1.Column)('varchar', { name: 'email' }),
+    (0, typeorm_1.Column)('varchar', { name: 'email', unique: true }),
     __metadata("design:type", String)
 ], User.prototype, "email", void 0);
 __decorate([
-    (0, typeorm_1.Column)('varchar', { name: 'nickname' }),
+    (0, typeorm_1.Column)('varchar', { name: 'nickname', unique: true }),
     __metadata("design:type", String)
 ], User.prototype, "nickname", void 0);
 __decorate([
-    (0, typeorm_1.Column)('varchar', { name: 'first_name' }),
+    (0, typeorm_1.Column)('varchar', { name: 'first_name', nullable: false }),
     __metadata("design:type", String)
 ], User.prototype, "first_name", void 0);
 __decorate([
-    (0, typeorm_1.Column)('varchar', { name: 'last_name' }),
+    (0, typeorm_1.Column)('varchar', { name: 'last_name', nullable: false }),
     __metadata("design:type", String)
 ], User.prototype, "last_name", void 0);
 __decorate([
-    (0, typeorm_1.Column)('varchar', { name: 'password' }),
+    (0, typeorm_1.Column)('varchar', { name: 'password', nullable: false }),
     __metadata("design:type", String)
 ], User.prototype, "password", void 0);
 __decorate([
-    (0, typeorm_1.Column)('timestamp', { name: 'email_varification_time' }),
+    (0, typeorm_1.Column)('timestamp', { name: 'email_varification_time', nullable: true }),
     __metadata("design:type", String)
 ], User.prototype, "email_varification_time", void 0);
-__decorate([
-    (0, typeorm_1.Column)('tinyint', { name: 'auth' }),
-    __metadata("design:type", Number)
-], User.prototype, "auth", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)({ name: 'joindate' }),
     __metadata("design:type", String)

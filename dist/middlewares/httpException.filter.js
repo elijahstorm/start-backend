@@ -12,24 +12,25 @@ let HttpExceptionFilter = class HttpExceptionFilter {
     catch(exception, host) {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse();
+        const request = JSON.stringify(ctx.getRequest().body);
         const status = exception.getStatus();
         const err = exception.getResponse();
-        if (typeof err !== 'string' && err.statusCode === 400) {
-            const request = JSON.stringify(ctx.getRequest().body);
+        if ((typeof err !== 'string' && err.statusCode === 400) || status == null) {
             common_1.Logger.error(`url : ${ctx.getRequest().url}, code : ${status}, message : ${err.message}, \n request : ${request}  \n stack : ${exception.stack}`);
             return response.status(status).json({
-                success: false,
+                success: 0,
                 code: status,
-                data: err.message.toString(),
+                data: JSON.stringify(err.message)
             });
         }
-        response.status(status).json({
-            success: false,
-            code: status,
-            data: err.message
-        });
-        const request = JSON.stringify(ctx.getRequest().body);
-        common_1.Logger.error(`url : ${ctx.getRequest().url}, code : ${status}, message : ${err.message}, \n request : ${request}  \n stack : ${exception.stack}`);
+        else {
+            common_1.Logger.warn(`url : ${ctx.getRequest().url}, code : ${status}, message : ${err.message}, \n request : ${request}  \n stack : ${exception.stack}`);
+            return response.status(400).json({
+                success: 0,
+                code: status,
+                data: err.message
+            });
+        }
     }
 };
 HttpExceptionFilter = __decorate([

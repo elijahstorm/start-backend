@@ -13,6 +13,10 @@ const config_1 = require("@nestjs/config");
 const typeorm_1 = require("@nestjs/typeorm");
 const users_module_1 = require("./users/users.module");
 const database_providers_1 = require("./database.providers");
+const auth_module_1 = require("./auth/auth.module");
+const page_module_1 = require("./common/page/page.module");
+const file_module_1 = require("./common/file/file.module");
+const email_module_1 = require("./common/email/email.module");
 let AppModule = class AppModule {
     configure(consumer) {
         consumer.apply(logger_middleware_1.LoggerMiddleware).forRoutes('*');
@@ -23,7 +27,11 @@ AppModule = __decorate([
         imports: [
             config_1.ConfigModule.forRoot({ isGlobal: true }),
             typeorm_1.TypeOrmModule.forRoot(database_providers_1.typeORMConfig[0]),
-            users_module_1.UsersModule
+            users_module_1.UsersModule,
+            auth_module_1.AuthModule,
+            page_module_1.PageModule,
+            file_module_1.FileModule,
+            email_module_1.EmailModule
         ],
         controllers: [],
         providers: [],

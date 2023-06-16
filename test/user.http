@@ -19,6 +19,12 @@ Content-Type: application/json;charset=UTF-8
     "password" : "12323"
 }
 
+###로그인하기
+POST http://localhost:3001/api/users/sendEmail HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+
+
+
 ###로그아웃하기
 POST http://localhost:3001/api/users/logout HTTP/1.1
 Content-Type: application/json;charset=UTF-8

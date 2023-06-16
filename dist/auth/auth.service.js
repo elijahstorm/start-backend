@@ -22,14 +22,11 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
-const bcrypt_1 = __importDefault(require("bcrypt"));
+const Enum_1 = require("../common/Enum");
 const user_repository_1 = require("../users/Repository/user.repository");
 let AuthService = class AuthService {
     constructor(usersRepository) {
@@ -38,15 +35,17 @@ let AuthService = class AuthService {
     async validateUser(email, password) {
         const user = await this.usersRepository.findOne({
             where: { email },
-            select: ['uid', 'email', 'password'],
+            select: ['uid', 'email', 'password', 'email_varification_time', 'nickname'],
         });
-        console.log(email, password, user);
         if (!user) {
             return null;
         }
-        const result = await bcrypt_1.default.compare(password, user.password);
+        const result = user.password == password ? true : false;
         if (result) {
             const { password } = user, userWithoutPassword = __rest(user, ["password"]);
+            if (user.email_varification_time == null) {
+                throw new common_1.HttpException('NOT_EMAIL_VARIFI_USER', Enum_1.Return.NOT_EMAIL_VARIFI_USER);
+            }
             return userWithoutPassword;
         }
         return null;

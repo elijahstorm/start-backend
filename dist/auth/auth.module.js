@@ -13,14 +13,14 @@ const typeorm_1 = require("@nestjs/typeorm");
 const auth_service_1 = require("./auth.service");
 const local_serializer_1 = require("./local.serializer");
 const local_strategy_1 = require("./local.strategy");
-const User_1 = require("../entities/User");
+const user_repository_1 = require("../users/Repository/user.repository");
 let AuthModule = class AuthModule {
 };
 AuthModule = __decorate([
     (0, common_1.Module)({
         imports: [
             passport_1.PassportModule.register({ session: true }),
-            typeorm_1.TypeOrmModule.forFeature([User_1.User]),
+            typeorm_1.TypeOrmModule.forFeature([user_repository_1.UserRepository]),
         ],
         providers: [auth_service_1.AuthService, local_strategy_1.LocalStrategy, local_serializer_1.LocalSerializer],
     })

@@ -25,7 +25,6 @@ let LocalSerializer = class LocalSerializer extends passport_1.PassportSerialize
         this.usersRepository = usersRepository;
     }
     serializeUser(user, done) {
-        console.log(user);
         done(null, user.uid);
     }
     async deserializeUser(uid, done) {

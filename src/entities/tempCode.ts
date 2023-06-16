@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import moment from 'moment';
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Injectable()
@@ -31,9 +32,18 @@ export class tempCode {
         return temp;
     }
 
-    public update(){
+    public update(code : string){
         this.trycnt = this.trycnt + 1;
+        this.send_date = moment().format('YYYY-MM-DD HH:mm:ss');
+        this.code = code;
         return this;
     }
+
+    
+    public resetupdate(){
+        this.trycnt = 0;
+        return this;
+    }
+
 }
   

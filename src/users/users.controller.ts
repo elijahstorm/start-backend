@@ -53,6 +53,30 @@ export class UsersController {
     return new returnResponse(Return.OK, user);
   }
 
+  @ApiOperation({ summary: 'sendAuthEmail' })
+  @ApiBadRequestResponse({
+    description : `
+    12000 : Over_Max_Count`, type : returnErrorResponse })
+  @Post('/sendEmail')
+  async sendAuthEmail(@currentUser() user: User) {
+    return await this.usersService.SendAuthEmail(user);
+  }
+
+
+  @ApiOperation({ summary: 'conformAuthEmail' })
+  @ApiBadRequestResponse({
+    description : `
+    13000 : Over_Time,
+    13001 : Wrong_Code,
+    `, type : returnErrorResponse })
+  @Post('/conform')
+  async conformAuthEmail(
+    @Body() req ,
+    @currentUser() user: User) {
+    return await this.usersService.conformValidEmail(req ,user);
+  }
+
+
 
   @ApiCookieAuth('connect.sid')
   @ApiOperation({ summary: 'logout' })

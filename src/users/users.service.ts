@@ -9,11 +9,15 @@ import { timestamp } from 'rxjs';
 import moment from 'moment';
 import { TempCodeRepository } from './Repository/tempCode.repository';
 import { tempCode } from 'src/entities/tempCode';
+import { EmailService } from 'src/common/email/email.service';
+const crypto = require('crypto');
+
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(UserRepository) private usersRepository: UserRepository,
     @InjectRepository(TempCodeRepository) private tempCodeRepository: TempCodeRepository,
+    private emailSerivce : EmailService,
     private user : User,
     private tempCode : tempCode
   ) {}
@@ -49,31 +53,40 @@ export class UsersService {
     }
   }
 
+
   //계정유효성검사 이메일보내기
-  async SendValidEmail( currentUser : User) : Promise<any>{
+  async SendAuthEmail( currentUser : User) : Promise<any>{
     try{
       const max_trycnt = 4;
-      
+      //임시코드 생성
+      const tempCode = crypto.randomBytes(6).toString('hex');
       let tempInfo = await this.tempCodeRepository.findOne({ uid : currentUser.uid, type : eTempType.Valid_Email});
 
-      let code;
 
+      //이전 발급내역이 있다면-------------------------------------------------------------------------
       if( tempInfo){
         //하루에 4회를 초과하였다면
         if( tempInfo.trycnt > max_trycnt && moment().diff( moment(tempInfo.send_date), 'd') > 1)
           throw new HttpException('Over_Max_Count', Return.Over_Max_Count);
+
         
         else {
-          // 코드 생성하고, 이메일 보내기
-          tempInfo.update();
-          await this.tempCodeRepository.update({id : tempInfo.id},tempInfo);
+          if( tempInfo.trycnt > max_trycnt){
+            tempInfo.resetupdate();
+          }
+
+          tempInfo.update(tempCode);
+          await this.emailSerivce.sendTempPW( currentUser.email, tempCode);
+          await this.tempCodeRepository.update({id : tempInfo.id} ,tempInfo);
+          
         }
       }
 
-      //if there is no list
+      //if there is no list -------------------------------------------------------------------------------
       else if( !tempInfo){
         //코드 생성하고, 이메일 보내기
-        let temp = this.tempCode.create( eTempType.Valid_Email, code, currentUser.uid);
+        let temp = this.tempCode.create( eTempType.Valid_Email, tempCode, currentUser.uid);
+        await this.emailSerivce.sendTempPW( currentUser.email, tempCode);
         await this.tempCodeRepository.save(temp, {reload : false});
       }
 
@@ -86,6 +99,26 @@ export class UsersService {
 
 
   //계정 임시번호 맞는지 확인하기
+ async conformValidEmail( req ,currentUser : User) : Promise<any>{
+  try{
+    const tempInfo = await this.tempCodeRepository.findOneOrFail({ uid : currentUser.uid, type : eTempType.Valid_Email});
+    
+    if( moment().diff( moment(tempInfo.send_date), 'd') > 1){
+      throw new HttpException( 'Over_Time', Return.Over_Time );
+    }
+
+    if( tempInfo.code != req.tempCode){
+      throw new HttpException( 'Wrong_Code', Return.Wrong_Code );
+    }
+
+    
+    return new returnResponse(Return.OK);
+  }
+  catch(err){
+    throw new HttpException(err, err.status);
+  }
+}
+
 
   
   

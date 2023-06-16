@@ -19,9 +19,11 @@ const local_auth_guard_1 = require("../auth/local-auth.guard");
 const not_logged_in_guard_1 = require("../auth/not-logged-in.guard");
 const logged_in_guard_1 = require("../auth/logged-in.guard");
 const CurrentUser_decorator_1 = require("../common/decorators/CurrentUser.decorator");
-const join_request_dto_1 = require("./dto/join.request.dto");
+const user_request_dto_1 = require("./dto/user.request.dto");
 const users_service_1 = require("./users.service");
 const User_1 = require("../entities/User");
+const user_dto_1 = require("../common/dto/user.dto");
+const Enum_1 = require("../common/Enum");
 let UsersController = class UsersController {
     constructor(usersService) {
         this.usersService = usersService;
@@ -30,10 +32,10 @@ let UsersController = class UsersController {
         return user || false;
     }
     async join(req) {
-        const user = this.usersService.join(req);
+        return await this.usersService.join(req);
     }
     async login(user) {
-        return user;
+        return new user_dto_1.returnResponse(Enum_1.Return.OK, user);
     }
     async logout(res) {
         res.clearCookie('connect.sid', { httpOnly: true });
@@ -52,15 +54,26 @@ __decorate([
 __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'join' }),
     (0, common_1.UseGuards)(not_logged_in_guard_1.NotLoggedInGuard),
-    (0, common_1.Post)(),
+    (0, common_1.Post)('join'),
+    (0, swagger_1.ApiCreatedResponse)({ type: user_dto_1.returnResponse, description: ' result is undefined' }),
+    (0, swagger_1.ApiBadRequestResponse)({
+        description: `
+    10000 : already exist email error`, type: user_dto_1.returnErrorResponse
+    }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [join_request_dto_1.JoinRequestDto]),
+    __metadata("design:paramtypes", [user_request_dto_1.JoinRequestDto]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "join", null);
 __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'login' }),
     (0, common_1.UseGuards)(local_auth_guard_1.LocalAuthGuard),
+    (0, swagger_1.ApiUnauthorizedResponse)(),
+    (0, swagger_1.ApiBadRequestResponse)({
+        description: `
+    11000 : fail login,
+    11001 : not email validated`, type: user_dto_1.returnErrorResponse
+    }),
     (0, common_1.Post)('login'),
     __param(0, (0, CurrentUser_decorator_1.currentUser)()),
     __metadata("design:type", Function),
