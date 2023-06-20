@@ -19,9 +19,23 @@ Content-Type: application/json;charset=UTF-8
     "password" : "12323"
 }
 
-###로그인하기
+###인증메일 보내기
 POST http://localhost:3001/api/users/sendEmail HTTP/1.1
 Content-Type: application/json;charset=UTF-8
+
+{
+    "email" : "kikiplus1@naver.com"
+}
+
+
+###인증메일 보내기
+POST http://localhost:3001/api/users/conform HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+
+{
+    "email" : "kikiplus1@naver.com",
+    "code" : "71c07f63da59"
+}
 
 
 

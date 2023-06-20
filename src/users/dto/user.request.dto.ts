@@ -32,3 +32,32 @@ export class JoinRequestDto {
   })
   public last_name: string;
 }
+
+
+export class SendAuthEmailRequestDto {
+  @IsEmail()
+  @ApiProperty({
+    example: '1111@gmail.com',
+    description: '이메일',
+  })
+  public email: string;
+
+}
+
+export class ConformAuthEmailRequestDto {
+  @IsEmail()
+  @ApiProperty({
+    example: '1111@gmail.com',
+    description: '이메일',
+  })
+  public email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'validCode',
+  })
+  public code: string;
+
+}
+

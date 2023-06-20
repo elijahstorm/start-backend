@@ -12,7 +12,7 @@ import { NotLoggedInGuard } from '../auth/not-logged-in.guard';
 import { LoggedInGuard } from '../auth/logged-in.guard';
 import { currentUser } from '../common/decorators/CurrentUser.decorator';
 
-import { JoinRequestDto } from './dto/user.request.dto';
+import { ConformAuthEmailRequestDto, JoinRequestDto, SendAuthEmailRequestDto } from './dto/user.request.dto';
 import { UsersService } from './users.service';
 import { User } from 'src/entities/User';
 import { returnErrorResponse, returnResponse } from 'src/common/dto/user.dto';
@@ -46,8 +46,8 @@ export class UsersController {
   @ApiUnauthorizedResponse()
   @ApiBadRequestResponse({
     description : `
-    11000 : fail login,
-    11001 : not email validated`, type : returnErrorResponse })
+    2 : NOT_EMAIL_VARIFI_USER,
+    11000 : fail login`, type : returnErrorResponse })
   @Post('login')
   async login(@currentUser() user: User) {
     return new returnResponse(Return.OK, user);
@@ -56,24 +56,26 @@ export class UsersController {
   @ApiOperation({ summary: 'sendAuthEmail' })
   @ApiBadRequestResponse({
     description : `
+    1 : Not_Exist_Email,
     12000 : Over_Max_Count`, type : returnErrorResponse })
   @Post('/sendEmail')
-  async sendAuthEmail(@currentUser() user: User) {
-    return await this.usersService.SendAuthEmail(user);
+  async sendAuthEmail(
+    @Body() req: SendAuthEmailRequestDto) {
+    return await this.usersService.SendAuthEmail(req);
   }
 
 
   @ApiOperation({ summary: 'conformAuthEmail' })
   @ApiBadRequestResponse({
     description : `
+    1 : Not_Exist_Email,
     13000 : Over_Time,
     13001 : Wrong_Code,
     `, type : returnErrorResponse })
   @Post('/conform')
   async conformAuthEmail(
-    @Body() req ,
-    @currentUser() user: User) {
-    return await this.usersService.conformValidEmail(req ,user);
+    @Body() req : ConformAuthEmailRequestDto ) {
+    return await this.usersService.conformValidEmail(req);
   }
 
 

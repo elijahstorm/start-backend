@@ -13,16 +13,21 @@ export class AuthService {
   async validateUser(email: string, password: string) {
     const user = await this.usersRepository.findOne({
       where: { email },
-      select: ['uid', 'email', 'password','email_varification_time','nickname'],
+      select: ['uid', 'email', 'password','email_varification_time','nickname','trycnt'],
     });
 
     if (!user) {
       return null;
     }
 
+    //check password
     const result = user.password == password ? true : false;
 
-    if (result) {
+    if( result == false){
+      throw new HttpException( 'WRONG_PASSWORD', Return.NOT_EMAIL_VARIFI_USER );
+    }
+
+    else if (result == true) {
       //password를 제외한 나머지값을 넘겨주기
       const { password, ...userWithoutPassword } = user; 
 

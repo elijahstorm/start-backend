@@ -1,15 +1,23 @@
 import { Module } from '@nestjs/common';
 import { emailController as EmailController } from './email.controller';
 import { EmailService } from './email.service';
-import { MailerModule, MailerService } from '@nestjs-modules/mailer';
+import { MailerModule } from '@nestjs-modules/mailer';
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
+const email = process.env.EMAIL + '@' +process.env.EMAIL_DOMAIN;
 
 @Module({
     imports: [
       MailerModule.forRoot({
-        transport: `smtps://${process.env.EAMIL}:${process.env.ADMIN_PASSWORD}@smtp.worksmobile.com`,
+        transport: {        
+          host: `smtp.${process.env.EMAIL_DOMAIN}`,
+          port: 587,
+          auth: {
+            user: email,
+            pass: process.env.EMAIL_PASSWORD,
+          }
+        },
         defaults: {
-          from: `"${process.env.EAMIL}" <${process.env.EAMIL}>`,
+          from: `'${email}' <${email}>`,
         },
         preview: true,
         template : {
@@ -18,7 +26,7 @@ import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
         }
       }),
       ],
-      providers: [ EmailService , EmailService],
+      providers: [ EmailService],
       controllers: [ EmailController],
 
 })

@@ -31,7 +31,7 @@ AppModule = __decorate([
             auth_module_1.AuthModule,
             page_module_1.PageModule,
             file_module_1.FileModule,
-            email_module_1.EmailModule
+            email_module_1.EmailModule,
         ],
         controllers: [],
         providers: [],

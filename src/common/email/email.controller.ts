@@ -1,5 +1,5 @@
 
-import { Post, Req, Res } from "@nestjs/common";
+import { Body, Post, Req, Res } from "@nestjs/common";
 import { Controller } from "@nestjs/common/decorators/core";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { EmailService } from "./email.service";
@@ -15,9 +15,9 @@ export class emailController {
     @ApiOperation({ summary: '메일 테스트하기' })
     @Post('/fail')
     async getfaillog(
-        @Req() req,
+        @Body() req ,
         @Res() res
         ){  
-            return this.emailService.sendTempPW(req.body.email, "11111");
+            return this.emailService.sendTempPW(req.email, req.password, req.template, req.title);
     }
 }

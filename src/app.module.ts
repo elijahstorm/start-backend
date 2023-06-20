@@ -8,8 +8,6 @@ import { AuthModule } from './auth/auth.module';
 import { PageModule } from './common/page/page.module';
 import { FileModule } from './common/file/file.module';
 import { EmailModule } from './common/email/email.module';
-import { MailerModule } from '@nestjs-modules/mailer';
-import { EjsAdapter} from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 
 @Module({
   imports: [
@@ -19,7 +17,6 @@ import { EjsAdapter} from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
     AuthModule,
     PageModule,
     FileModule,
-
     EmailModule,
   ],
   controllers: [],

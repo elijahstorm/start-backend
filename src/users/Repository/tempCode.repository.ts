@@ -1,10 +1,10 @@
 
 import { EntityRepository, Repository } from "typeorm";
 import { User } from "../../entities/User";
-import { tempCode } from "src/entities/tempCode";
+import { TempCode } from "src/entities/TempCode";
 
-@EntityRepository(tempCode)
-export class TempCodeRepository extends Repository<tempCode> {
+@EntityRepository(TempCode)
+export class TempCodeRepository extends Repository<TempCode> {
     
     
 }

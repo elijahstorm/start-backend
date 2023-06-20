@@ -1,6 +1,11 @@
 export enum Return { 
-    
+
+//common-------------------------
     OK = 0,
+    Not_Exist_Email = 1,
+    NOT_EMAIL_VARIFI_USER = 2,
+
+    
 
 //user---------------------------
     //join 
@@ -9,14 +14,13 @@ export enum Return {
 
     //login
     Fail_Login = 11000,
-    NOT_EMAIL_VARIFI_USER = 11001,
     
     //sendValidEmail
     Over_Max_Count = 12000,
 
     //conformValidEmail
     Over_Time = 13000,
-    Wrong_Code = 13001
+    Wrong_Code = 13001,
 
     
 }

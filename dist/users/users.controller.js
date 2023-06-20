@@ -37,6 +37,12 @@ let UsersController = class UsersController {
     async login(user) {
         return new user_dto_1.returnResponse(Enum_1.Return.OK, user);
     }
+    async sendAuthEmail(req) {
+        return await this.usersService.SendAuthEmail(req);
+    }
+    async conformAuthEmail(req, user) {
+        return await this.usersService.conformValidEmail(req, user);
+    }
     async logout(res) {
         res.clearCookie('connect.sid', { httpOnly: true });
         return res.send('ok');
@@ -80,6 +86,33 @@ __decorate([
     __metadata("design:paramtypes", [User_1.User]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "login", null);
+__decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'sendAuthEmail' }),
+    (0, swagger_1.ApiBadRequestResponse)({
+        description: `
+    12000 : Over_Max_Count`, type: user_dto_1.returnErrorResponse
+    }),
+    (0, common_1.Post)('/sendEmail'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [user_request_dto_1.SendAuthEmailRequestDto]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "sendAuthEmail", null);
+__decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'conformAuthEmail' }),
+    (0, swagger_1.ApiBadRequestResponse)({
+        description: `
+    13000 : Over_Time,
+    13001 : Wrong_Code,
+    `, type: user_dto_1.returnErrorResponse
+    }),
+    (0, common_1.Post)('/conform'),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, CurrentUser_decorator_1.currentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, User_1.User]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "conformAuthEmail", null);
 __decorate([
     (0, swagger_1.ApiCookieAuth)('connect.sid'),
     (0, swagger_1.ApiOperation)({ summary: 'logout' }),

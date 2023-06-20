@@ -15,7 +15,7 @@ const users_controller_1 = require("./users.controller");
 const user_repository_1 = require("./Repository/user.repository");
 const tempCode_repository_1 = require("./Repository/tempCode.repository");
 const tempCode_1 = require("../entities/tempCode");
-const mailer_1 = require("@nestjs-modules/mailer");
+const email_service_1 = require("../common/email/email.service");
 let UsersModule = class UsersModule {
 };
 UsersModule = __decorate([
@@ -23,7 +23,7 @@ UsersModule = __decorate([
         imports: [
             typeorm_1.TypeOrmModule.forFeature([user_repository_1.UserRepository, tempCode_repository_1.TempCodeRepository]),
         ],
-        providers: [users_service_1.UsersService, User_1.User, tempCode_1.tempCode, mailer_1.MailerService],
+        providers: [users_service_1.UsersService, User_1.User, tempCode_1.tempCode, email_service_1.EmailService],
         controllers: [users_controller_1.UsersController],
     })
 ], UsersModule);

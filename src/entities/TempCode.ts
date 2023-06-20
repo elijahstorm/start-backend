@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import moment from 'moment';
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Injectable()
 @Entity({ schema: 'tempCode', name: 'tempCode' })
-export class tempCode {
+export class TempCode {
     
     @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
     id: number;
@@ -25,10 +25,11 @@ export class tempCode {
     send_date: string;
   
     public create(type : number, code : string , uid : number){
-        const temp = new tempCode;
+        const temp = new TempCode;
         temp.type = type;
         temp.code = code ;
         temp.trycnt = 0;
+        temp.uid = uid;
         return temp;
     }
 

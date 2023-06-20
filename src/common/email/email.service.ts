@@ -9,30 +9,26 @@ export class EmailService {
         private readonly mailerService: MailerService
     ) { }
     
-    async send( email : string, title: string, password : string, template : string): Promise<any> {
+    async send( email : string, title: string, append : object, template : string): Promise<any> {
         try{
-            const result = this.mailerService
-                .sendMail({
-                    to: email , // list of receivers 
-                    from: process.env.EMAIL, // sender address
-                    subject: title, // Subject line
-                    template : `dist/common/email/template/${template}.ejs`,
-                    context : {
-                        email : email,
-                        password : password,
-                        url : `${process.env.ADMIN_URL}/login`
-                    }
-                });
+            const mail =  {
+                to: email , // list of receivers 
+                from: process.env.EMAIL+'@'+process.env.EMAIL_DOMAIN, // sender address
+                subject: title, // Subject line
+                template : `${template}.ejs`,
+                context : append
+            } 
+            const result = this. mailerService.sendMail(mail);
             return result;
-        }
+        }                                 
         catch(err){
             throw new HttpException(err, 400);
         }
     }
 
-    async sendTempPW( email : string, password : string) : Promise<any>{
+    async sendTempPW( email : string, append : object, templateName : string, title : string) : Promise<any>{
         try{
-            const result = await this.send( email, "start:T - validCode", password, "changePWTemplate");
+            const result = await this.send( email, title, append, templateName);
             Logger.log(result);
             return result;
         }   

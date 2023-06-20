@@ -2,13 +2,12 @@ import { HttpException, Injectable} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserRepository } from './Repository/user.repository';
 import { User } from 'src/entities/User';
-import { JoinRequestDto } from './dto/user.request.dto';
+import { ConformAuthEmailRequestDto, JoinRequestDto, SendAuthEmailRequestDto } from './dto/user.request.dto';
 import { returnResponse } from 'src/common/dto/user.dto';
 import { Return, eTempType } from 'src/common/Enum';
-import { timestamp } from 'rxjs';
 import moment from 'moment';
 import { TempCodeRepository } from './Repository/tempCode.repository';
-import { tempCode } from 'src/entities/tempCode';
+import { TempCode } from 'src/entities/TempCode';
 import { EmailService } from 'src/common/email/email.service';
 const crypto = require('crypto');
 
@@ -19,7 +18,7 @@ export class UsersService {
     @InjectRepository(TempCodeRepository) private tempCodeRepository: TempCodeRepository,
     private emailSerivce : EmailService,
     private user : User,
-    private tempCode : tempCode
+    private tempCode : TempCode
   ) {}
 
   //가입하기
@@ -55,12 +54,20 @@ export class UsersService {
 
 
   //계정유효성검사 이메일보내기
-  async SendAuthEmail( currentUser : User) : Promise<any>{
+  async SendAuthEmail( req : SendAuthEmailRequestDto) : Promise<any>{
     try{
       const max_trycnt = 4;
+      const email_title = "start:T - validCode";
+      const email_template = "changePWTemplate"
+
       //임시코드 생성
       const tempCode = crypto.randomBytes(6).toString('hex');
-      let tempInfo = await this.tempCodeRepository.findOne({ uid : currentUser.uid, type : eTempType.Valid_Email});
+      const user = await this.usersRepository.findOne({ email : req.email});
+      if( !user){
+        throw new HttpException( 'Not_Exist_Email', Return.Not_Exist_Email);
+      }
+
+      let tempInfo = await this.tempCodeRepository.findOne({ uid : user.uid, type : eTempType.Valid_Email});
 
 
       //이전 발급내역이 있다면-------------------------------------------------------------------------
@@ -76,7 +83,12 @@ export class UsersService {
           }
 
           tempInfo.update(tempCode);
-          await this.emailSerivce.sendTempPW( currentUser.email, tempCode);
+          let append = {
+              email : req.email,
+              password : tempCode,
+              url : `${process.env.ADMIN_URL}/login`
+          }
+          await this.emailSerivce.sendTempPW( user.email, append, email_template, email_title );
           await this.tempCodeRepository.update({id : tempInfo.id} ,tempInfo);
           
         }
@@ -85,10 +97,18 @@ export class UsersService {
       //if there is no list -------------------------------------------------------------------------------
       else if( !tempInfo){
         //코드 생성하고, 이메일 보내기
-        let temp = this.tempCode.create( eTempType.Valid_Email, tempCode, currentUser.uid);
-        await this.emailSerivce.sendTempPW( currentUser.email, tempCode);
+        let temp = this.tempCode.create( eTempType.Valid_Email, tempCode, user.uid);
+        let append = {
+          email : req.email,
+          password : tempCode,
+          url : `${process.env.ADMIN_URL}/login`
+        }
+        
+        await this.emailSerivce.sendTempPW( user.email, append, email_template, email_title);
         await this.tempCodeRepository.save(temp, {reload : false});
       }
+
+      //active 로그 남기기
 
       return new returnResponse(Return.OK);
     }
@@ -98,26 +118,36 @@ export class UsersService {
   }
 
 
-  //계정 임시번호 맞는지 확인하기
- async conformValidEmail( req ,currentUser : User) : Promise<any>{
-  try{
-    const tempInfo = await this.tempCodeRepository.findOneOrFail({ uid : currentUser.uid, type : eTempType.Valid_Email});
-    
-    if( moment().diff( moment(tempInfo.send_date), 'd') > 1){
-      throw new HttpException( 'Over_Time', Return.Over_Time );
-    }
+    //계정 임시번호 맞는지 확인하기
+  async conformValidEmail( req : ConformAuthEmailRequestDto ) : Promise<any>{
+    try{
+      const user = await this.usersRepository.findOne({ email : req.email});
+      if( !user){
+        throw new HttpException( 'Not_Exist_Email', Return.Not_Exist_Email);
+      }
 
-    if( tempInfo.code != req.tempCode){
-      throw new HttpException( 'Wrong_Code', Return.Wrong_Code );
-    }
+      const tempInfo = await this.tempCodeRepository.findOneOrFail({ uid : user.uid, type : eTempType.Valid_Email});
+      
+      if( moment().diff( moment(tempInfo.send_date), 'd') > 1){
+        throw new HttpException( 'Over_Time', Return.Over_Time );
+      }
 
-    
-    return new returnResponse(Return.OK);
+      if( tempInfo.code != req.code){
+        throw new HttpException( 'Wrong_Code', Return.Wrong_Code );
+      }
+
+      // insert valificated_time
+      user.emailVarificated();
+      await this.usersRepository.update(user.uid, user);
+      
+      //active 로그 남기기
+
+      return new returnResponse(Return.OK);
+    }
+    catch(err){
+      throw new HttpException(err, err.status);
+    }
   }
-  catch(err){
-    throw new HttpException(err, err.status);
-  }
-}
 
 
   

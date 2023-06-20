@@ -58,11 +58,17 @@ let UsersService = class UsersService {
             throw new common_1.HttpException(err, err.status);
         }
     }
-    async SendValidEmail(currentUser) {
+    async SendAuthEmail(req) {
         try {
             const max_trycnt = 4;
+            const email_title = "start:T - validCode";
+            const email_template = "changePWTemplate";
             const tempCode = crypto.randomBytes(6).toString('hex');
-            let tempInfo = await this.tempCodeRepository.findOne({ uid: currentUser.uid, type: Enum_1.eTempType.Valid_Email });
+            const user = await this.usersRepository.findOne({ email: req.email });
+            if (!user) {
+                throw new common_1.HttpException('Not_Exist_Email', Enum_1.Return.Not_Exist_Email);
+            }
+            let tempInfo = await this.tempCodeRepository.findOne({ uid: user.uid, type: Enum_1.eTempType.Valid_Email });
             if (tempInfo) {
                 if (tempInfo.trycnt > max_trycnt && (0, moment_1.default)().diff((0, moment_1.default)(tempInfo.send_date), 'd') > 1)
                     throw new common_1.HttpException('Over_Max_Count', Enum_1.Return.Over_Max_Count);
@@ -71,13 +77,23 @@ let UsersService = class UsersService {
                         tempInfo.resetupdate();
                     }
                     tempInfo.update(tempCode);
-                    await this.emailSerivce.sendTempPW(currentUser.email, tempCode);
+                    let append = {
+                        email: req.email,
+                        password: tempCode,
+                        url: `${process.env.ADMIN_URL}/login`
+                    };
+                    await this.emailSerivce.sendTempPW(user.email, append, email_template, email_title);
                     await this.tempCodeRepository.update({ id: tempInfo.id }, tempInfo);
                 }
             }
             else if (!tempInfo) {
-                let temp = this.tempCode.create(Enum_1.eTempType.Valid_Email, tempCode, currentUser.uid);
-                await this.emailSerivce.sendTempPW(currentUser.email, tempCode);
+                let temp = this.tempCode.create(Enum_1.eTempType.Valid_Email, tempCode, user.uid);
+                let append = {
+                    email: req.email,
+                    password: tempCode,
+                    url: `${process.env.ADMIN_URL}/login`
+                };
+                await this.emailSerivce.sendTempPW(user.email, append, email_template, email_title);
                 await this.tempCodeRepository.save(temp, { reload: false });
             }
             return new user_dto_1.returnResponse(Enum_1.Return.OK);
