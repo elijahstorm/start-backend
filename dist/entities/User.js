@@ -8,10 +8,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 var User_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const common_1 = require("@nestjs/common");
+const moment_1 = __importDefault(require("moment"));
 const typeorm_1 = require("typeorm");
 let User = User_1 = class User {
     join(email, password, nickname, first_name, last_name) {
@@ -23,13 +27,29 @@ let User = User_1 = class User {
         user.last_name = last_name;
         return user;
     }
+    emailVarificated() {
+        this.email_varification_time = (0, moment_1.default)().format('YYYY-MM-DD HH:mm:ss');
+        return this;
+    }
+    addTryCount() {
+        this.trycnt = this.trycnt + 1;
+        return this;
+    }
+    resetTryCount() {
+        this.trycnt = 0;
+        return this;
+    }
 };
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)({ type: 'bigint', name: 'uid' }),
     __metadata("design:type", Number)
 ], User.prototype, "uid", void 0);
 __decorate([
-    (0, typeorm_1.Column)('varchar', { name: 'email', unique: true }),
+    (0, typeorm_1.Column)('int', { name: 'grade', default: 100 }),
+    __metadata("design:type", Number)
+], User.prototype, "grade", void 0);
+__decorate([
+    (0, typeorm_1.Column)('varchar', { name: 'email', default: true }),
     __metadata("design:type", String)
 ], User.prototype, "email", void 0);
 __decorate([
@@ -56,6 +76,10 @@ __decorate([
     (0, typeorm_1.CreateDateColumn)({ name: 'joindate' }),
     __metadata("design:type", String)
 ], User.prototype, "joindate", void 0);
+__decorate([
+    (0, typeorm_1.Column)('tinyint', { name: 'trycnt', default: 0 }),
+    __metadata("design:type", Number)
+], User.prototype, "trycnt", void 0);
 User = User_1 = __decorate([
     (0, common_1.Injectable)(),
     (0, typeorm_1.Entity)({ schema: 'user', name: 'user' })

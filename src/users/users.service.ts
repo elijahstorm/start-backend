@@ -9,6 +9,8 @@ import moment from 'moment';
 import { TempCodeRepository } from './Repository/tempCode.repository';
 import { TempCode } from 'src/entities/TempCode';
 import { EmailService } from 'src/common/email/email.service';
+import { ActiveLogRepository } from 'src/common/repository/activelogRepository';
+import { ActiveLog } from 'src/entities/ActiveLog';
 const crypto = require('crypto');
 
 @Injectable()
@@ -16,9 +18,11 @@ export class UsersService {
   constructor(
     @InjectRepository(UserRepository) private usersRepository: UserRepository,
     @InjectRepository(TempCodeRepository) private tempCodeRepository: TempCodeRepository,
+    @InjectRepository(ActiveLogRepository) private actlogRepository: ActiveLogRepository,
     private emailSerivce : EmailService,
     private user : User,
-    private tempCode : TempCode
+    private tempCode : TempCode,
+    private activeLog : ActiveLog
   ) {}
 
   //가입하기
@@ -109,6 +113,8 @@ export class UsersService {
       }
 
       //active 로그 남기기
+      const activeLog = this.activeLog.create('/user/sendEmail', req, user.uid);
+      await this.actlogRepository.save(activeLog, {reload : false});
 
       return new returnResponse(Return.OK);
     }
@@ -139,8 +145,10 @@ export class UsersService {
       // insert valificated_time
       user.emailVarificated();
       await this.usersRepository.update(user.uid, user);
-      
+
       //active 로그 남기기
+      const activeLog = this.activeLog.create('/user/conform', req, user.uid);
+      await this.actlogRepository.save(activeLog, {reload : false});
 
       return new returnResponse(Return.OK);
     }

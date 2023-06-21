@@ -7,12 +7,14 @@ import { UserRepository } from './Repository/user.repository';
 import { TempCodeRepository } from './Repository/tempCode.repository';
 import { EmailService } from 'src/common/email/email.service';
 import { TempCode } from 'src/entities/TempCode';
+import { ActiveLog } from 'src/entities/ActiveLog';
+import { ActiveLogRepository } from 'src/common/repository/activelogRepository';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserRepository, TempCodeRepository]),
+    TypeOrmModule.forFeature([UserRepository, TempCodeRepository, ActiveLogRepository]),
   ],
-  providers: [UsersService, User, TempCode, EmailService],
+  providers: [UsersService, User, TempCode, EmailService, ActiveLog],
   controllers: [UsersController],
 })
 export class UsersModule {}

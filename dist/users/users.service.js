@@ -24,16 +24,20 @@ const user_dto_1 = require("../common/dto/user.dto");
 const Enum_1 = require("../common/Enum");
 const moment_1 = __importDefault(require("moment"));
 const tempCode_repository_1 = require("./Repository/tempCode.repository");
-const tempCode_1 = require("../entities/tempCode");
+const TempCode_1 = require("../entities/TempCode");
 const email_service_1 = require("../common/email/email.service");
+const activelogRepository_1 = require("../common/repository/activelogRepository");
+const ActiveLog_1 = require("../entities/ActiveLog");
 const crypto = require('crypto');
 let UsersService = class UsersService {
-    constructor(usersRepository, tempCodeRepository, emailSerivce, user, tempCode) {
+    constructor(usersRepository, tempCodeRepository, actlogRepository, emailSerivce, user, tempCode, activeLog) {
         this.usersRepository = usersRepository;
         this.tempCodeRepository = tempCodeRepository;
+        this.actlogRepository = actlogRepository;
         this.emailSerivce = emailSerivce;
         this.user = user;
         this.tempCode = tempCode;
+        this.activeLog = activeLog;
     }
     async join(req) {
         try {
@@ -96,21 +100,31 @@ let UsersService = class UsersService {
                 await this.emailSerivce.sendTempPW(user.email, append, email_template, email_title);
                 await this.tempCodeRepository.save(temp, { reload: false });
             }
+            const activeLog = this.activeLog.create('/user/sendEmail', req, user.uid);
+            await this.actlogRepository.save(activeLog, { reload: false });
             return new user_dto_1.returnResponse(Enum_1.Return.OK);
         }
         catch (err) {
             throw new common_1.HttpException(err, err.status);
         }
     }
-    async conformValidEmail(req, currentUser) {
+    async conformValidEmail(req) {
         try {
-            const tempInfo = await this.tempCodeRepository.findOneOrFail({ uid: currentUser.uid, type: Enum_1.eTempType.Valid_Email });
+            const user = await this.usersRepository.findOne({ email: req.email });
+            if (!user) {
+                throw new common_1.HttpException('Not_Exist_Email', Enum_1.Return.Not_Exist_Email);
+            }
+            const tempInfo = await this.tempCodeRepository.findOneOrFail({ uid: user.uid, type: Enum_1.eTempType.Valid_Email });
             if ((0, moment_1.default)().diff((0, moment_1.default)(tempInfo.send_date), 'd') > 1) {
                 throw new common_1.HttpException('Over_Time', Enum_1.Return.Over_Time);
             }
-            if (tempInfo.code != req.tempCode) {
+            if (tempInfo.code != req.code) {
                 throw new common_1.HttpException('Wrong_Code', Enum_1.Return.Wrong_Code);
             }
+            user.emailVarificated();
+            await this.usersRepository.update(user.uid, user);
+            const activeLog = this.activeLog.create('/user/conform', req, user.uid);
+            await this.actlogRepository.save(activeLog, { reload: false });
             return new user_dto_1.returnResponse(Enum_1.Return.OK);
         }
         catch (err) {
@@ -122,11 +136,14 @@ UsersService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(user_repository_1.UserRepository)),
     __param(1, (0, typeorm_1.InjectRepository)(tempCode_repository_1.TempCodeRepository)),
+    __param(2, (0, typeorm_1.InjectRepository)(activelogRepository_1.ActiveLogRepository)),
     __metadata("design:paramtypes", [user_repository_1.UserRepository,
         tempCode_repository_1.TempCodeRepository,
+        activelogRepository_1.ActiveLogRepository,
         email_service_1.EmailService,
         User_1.User,
-        tempCode_1.tempCode])
+        TempCode_1.TempCode,
+        ActiveLog_1.ActiveLog])
 ], UsersService);
 exports.UsersService = UsersService;
 //# sourceMappingURL=users.service.js.map

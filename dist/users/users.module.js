@@ -14,16 +14,18 @@ const users_service_1 = require("./users.service");
 const users_controller_1 = require("./users.controller");
 const user_repository_1 = require("./Repository/user.repository");
 const tempCode_repository_1 = require("./Repository/tempCode.repository");
-const tempCode_1 = require("../entities/tempCode");
 const email_service_1 = require("../common/email/email.service");
+const TempCode_1 = require("../entities/TempCode");
+const ActiveLog_1 = require("../entities/ActiveLog");
+const activelogRepository_1 = require("../common/repository/activelogRepository");
 let UsersModule = class UsersModule {
 };
 UsersModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            typeorm_1.TypeOrmModule.forFeature([user_repository_1.UserRepository, tempCode_repository_1.TempCodeRepository]),
+            typeorm_1.TypeOrmModule.forFeature([user_repository_1.UserRepository, tempCode_repository_1.TempCodeRepository, activelogRepository_1.ActiveLogRepository]),
         ],
-        providers: [users_service_1.UsersService, User_1.User, tempCode_1.tempCode, email_service_1.EmailService],
+        providers: [users_service_1.UsersService, User_1.User, TempCode_1.TempCode, email_service_1.EmailService, ActiveLog_1.ActiveLog],
         controllers: [users_controller_1.UsersController],
     })
 ], UsersModule);

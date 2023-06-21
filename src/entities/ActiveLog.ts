@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { Column,  CreateDateColumn,  Entity, PrimaryColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column,  Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
 
 @Injectable()
-@Entity({ schema: 'grade', name: 'grade' })
+@Entity({ schema: 'activelog', name: 'activelog' })
 export class ActiveLog {
     
-    @PrimaryColumn({ type: 'bigint', name: 'id' })
+    @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
     id: number;
 
     @Column('bigint', { name: 'uid' })
@@ -17,7 +17,7 @@ export class ActiveLog {
     @Column('json', { name: 'request' })
     request: object;
 
-    @Column('timestamp', { name: 'date' , default : 'now()'})
+    @Column('timestamp', { name: 'date' , default: () => "CURRENT_TIMESTAMP"})
     date: string;
 
     public create( api : string, request : object, uid : number){
@@ -25,6 +25,8 @@ export class ActiveLog {
         log.api = api;
         log.request = request;
         log.uid = uid;
+
+        return log;
     }
 }
   

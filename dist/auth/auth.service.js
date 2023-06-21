@@ -35,13 +35,16 @@ let AuthService = class AuthService {
     async validateUser(email, password) {
         const user = await this.usersRepository.findOne({
             where: { email },
-            select: ['uid', 'email', 'password', 'email_varification_time', 'nickname'],
+            select: ['uid', 'email', 'password', 'email_varification_time', 'nickname', 'trycnt'],
         });
         if (!user) {
             return null;
         }
         const result = user.password == password ? true : false;
-        if (result) {
+        if (result == false) {
+            throw new common_1.HttpException('WRONG_PASSWORD', Enum_1.Return.NOT_EMAIL_VARIFI_USER);
+        }
+        else if (result == true) {
             const { password } = user, userWithoutPassword = __rest(user, ["password"]);
             if (user.email_varification_time == null) {
                 throw new common_1.HttpException('NOT_EMAIL_VARIFI_USER', Enum_1.Return.NOT_EMAIL_VARIFI_USER);
