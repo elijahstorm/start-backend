@@ -15,7 +15,7 @@ import { currentUser } from '../common/decorators/CurrentUser.decorator';
 import { ConformAuthEmailRequestDto, JoinRequestDto, SendAuthEmailRequestDto } from './dto/user.request.dto';
 import { UsersService } from './users.service';
 import { User } from 'src/entities/User';
-import { returnErrorResponse, returnResponse } from 'src/common/dto/user.dto';
+import { returnErrorResponse, returnResponse } from 'src/common/dto/common.dto';
 import { Return } from 'src/common/Enum';
 
 @ApiTags('USERS')

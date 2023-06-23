@@ -3,25 +3,9 @@ import { ApiProperty} from '@nestjs/swagger';
 import { PlayListSong } from "src/entities/PlayListSong";
 import { PlayList } from "src/entities/PlayList";
 import { Song } from "src/entities/Song";
-
-
-export class getPlaylistDto {
-    @ApiProperty({description: 'playlist_id'})
-    @Exclude() private readonly playlist_id: number | null;
-
-    @ApiProperty({description: 'title'})
-    @Exclude() private readonly title: string | null;
-
-    @ApiProperty({description: 'songList'})
-    @Exclude() private readonly songList: getPlaylistSongInfoDto[] | null;
-
-
-    constructor(entity : PlayList, song : PlayListSong[]) {
-        this.playlist_id = Number(entity.id);
-        this.title = entity.title;
-        this.songList = song.map((song) => new getPlaylistSongInfoDto(song));
-    }
-}
+import { Likes } from "src/entities/Likes";
+import { Comment } from "src/entities/Comment";
+import moment from "moment";
 
 
 export class getPlaylistSongInfoDto {
@@ -44,6 +28,45 @@ export class getPlaylistSongInfoDto {
         this.song_image = entity.song.image;
     }
 }
+
+
+export class getPlaylistDto {
+    @ApiProperty({description: 'playlist_id'})
+    @Exclude() private readonly playlist_id: number | null;
+
+    @ApiProperty({description: 'title'})
+    @Exclude() private readonly title: string | null;
+
+    @ApiProperty({description: 'songList', type :  [getPlaylistSongInfoDto]})
+    @Exclude() private readonly songList: getPlaylistSongInfoDto[] | null;
+
+
+    constructor(entity : PlayList, song : PlayListSong[]) {
+        this.playlist_id = Number(entity.id);
+        this.title = entity.title;
+        this.songList = song.map((song) => new getPlaylistSongInfoDto(song));
+    }
+}
+
+
+
+export class getCommentDto {
+    @ApiProperty({description: 'comment_id'})
+    @Exclude() private readonly comment_id: number | null;
+
+    @ApiProperty({description: 'comment'})
+    @Exclude() private readonly comment: string | null;
+
+    @ApiProperty({description: 'last_update date'})
+    @Exclude() private readonly date: string | null;
+
+    constructor(entity : Comment) {
+        this.comment_id = Number(entity.id);
+        this.comment = entity.comment;
+        this.date = moment(entity.date).format('YYYY-MM-DD HH:mm:ss');
+    }
+}
+
 
 
 export class getSongDetailInfoDto {
@@ -75,8 +98,14 @@ export class getSongDetailInfoDto {
     @ApiProperty({description: 'singer_descrition'})
     @Exclude() private readonly singer_descrition: string | null;
 
+    @ApiProperty({description: 'like'})
+    @Exclude() private readonly like: boolean | null;
 
-    constructor(entity : Song) {
+    @ApiProperty({description: 'user comment', type : getCommentDto})
+    @Exclude() private readonly comment: getCommentDto[]| null;
+
+
+    constructor(entity : Song, like : Likes, comment : Comment[]) {
         this.song_id = Number(entity.id);
         this.song_name = entity.name;
         this.song_lengh = entity.length;
@@ -86,7 +115,10 @@ export class getSongDetailInfoDto {
         this.video_name = entity.video?.name;
         this.singer_name = entity.singer?.name;
         this.singer_descrition = entity.singer?.descrition;
+        this.like = like? true : false;
+        this.comment = comment.map((comment) => new getCommentDto(comment));
     }
 }
+
 
 

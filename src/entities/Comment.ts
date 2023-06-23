@@ -4,7 +4,7 @@ import { upsertCommentRequestDto } from 'src/song/dto/songRequest';
 import { Column,  Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
 
 @Injectable()
-@Entity({ schema: 'db_start', name: 'Comment' })
+@Entity({ schema: 'db_start', name: 'comment' })
 export class Comment {
     
     @PrimaryGeneratedColumn({ type: 'int', name: 'id' })

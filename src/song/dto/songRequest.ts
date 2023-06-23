@@ -1,5 +1,12 @@
 import { ApiProperty} from '@nestjs/swagger';
 
+export class getPlayListRequestDto {
+
+    @ApiProperty({
+        description: '0 : system, 1 : user (playlist owner)'})
+    default: number;
+}
+
 
 export class UpsertSongRequestDto {
     @ApiProperty({
@@ -13,6 +20,10 @@ export class UpsertSongRequestDto {
     @ApiProperty({
         description: 'song cost'})
     cost: number;
+
+    @ApiProperty({
+        description: 'song image url'})
+    image: string;
 
     @ApiProperty({
         description: 'vido_id'})

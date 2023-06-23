@@ -1,6 +1,6 @@
 import { HttpException, Injectable} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { returnIdResponse, returnResponse } from 'src/common/dto/user.dto';
+import { returnIdResponse, returnResponse } from 'src/common/dto/common.dto';
 import { Return} from 'src/common/Enum';
 import { SongRepository } from './repository/song.repository';
 import { PlayListRepository } from './repository/playlist.repository';
@@ -8,7 +8,7 @@ import { PageRequestDto } from 'src/common/page/PageRequest';
 import { PlayListSongRepository } from './repository/playlistSong.repository';
 import { Page } from 'src/common/page/Page';
 import { getPlaylistDto, getSongDetailInfoDto } from './dto/songResponse';
-import { UpsertPlayListRequestDto, UpsertSingerRequestDto, UpsertSongRequestDto, UpsertVideoRequestDto, addLikeRequestDto, upsertCommentRequestDto } from './dto/songRequest';
+import { UpsertPlayListRequestDto, UpsertSingerRequestDto, UpsertSongRequestDto, UpsertVideoRequestDto, addLikeRequestDto, getPlayListRequestDto, upsertCommentRequestDto } from './dto/songRequest';
 import { Singer } from 'src/entities/Singer';
 import { Video } from 'src/entities/Video';
 import { PlayList } from 'src/entities/PlayList';
@@ -42,9 +42,10 @@ export class SongService {
 
 
   // 노래 playlist가져오기
-  async getAllPlaylist( uid : number, page : PageRequestDto) : Promise<returnResponse>{
+  async getAllPlaylist( req : getPlayListRequestDto, page : PageRequestDto, uid : number) : Promise<Page<getPlaylistDto>>{
     try{
-      let playlist = await this.playlistRepository.getAllPlayList(uid, page.page, page.size);
+      const user = req.default == 0 ? 0 : uid;
+      let playlist = await this.playlistRepository.getAllPlayList(user, page.page, page.size);
 
       let list = await Promise.all(playlist[0].map(async (playlistsong) => new getPlaylistDto(
         playlistsong,
@@ -52,7 +53,7 @@ export class SongService {
       )));
 
       const result = new Page<getPlaylistDto>(playlist[1] , page.size , list);
-      return new returnResponse(Return.OK, result)
+      return result;
     }
     catch(err){
       throw new HttpException(err, err.status);
@@ -61,9 +62,10 @@ export class SongService {
 
   
   // 노래 playlist 하나 가져오기
-  async getAllPlaylistOne( playlist_id : number) : Promise<returnResponse>{
+  async getAllPlaylistOne( playlist_id : number, uid : number) : Promise<returnResponse>{
     try{
-      let playlist = await this.playlistRepository.findOne(playlist_id);
+      const user = uid? uid : 0;
+      let playlist = await this.playlistRepository.findOneOrFail({id : playlist_id, uid : user});
 
       const result = new getPlaylistDto(
         playlist,
@@ -81,13 +83,17 @@ export class SongService {
   // 노래 정보 디테일 정보 가져오기
   async getSongDetail( song_id : number, uid : number) : Promise<returnResponse>{
     try{
-
-      //로그인한 유저의 comment리스트 가져오기
-
-      //로그인한 유저의 like 했는지 가져오기
-
       let song = await this.songRepository.getSongInfo(song_id);
-      const result = new getSongDetailInfoDto(song);
+
+      let like;
+      let comment;
+
+      if( uid){
+        comment = await this.commentRepository.find({where : {song_id : song_id, uid : uid}, order : {id : 'DESC'}});
+        like = await this.likesRepository.findOne({where : {song_id : song_id, uid : uid}});
+      }
+      
+      const result = new getSongDetailInfoDto(song, like, comment);
 
       return new returnResponse(Return.OK, result);
     }
@@ -96,12 +102,9 @@ export class SongService {
     }
   }
 
-
-
   //노래 등록하기 -> 나중에 관리자만 가능
   async SaveSong( req : UpsertSongRequestDto) : Promise<returnResponse>{
     try{
-      //making song
       let song = this.song.create( req);
       await this.songRepository.save(song, {reload : false});
     
@@ -145,8 +148,8 @@ export class SongService {
   }
 
   
-  //노래&비디오 수정하기 > 나중에 관리자만 가능
-  async getSaveSong( video_id : number, req : UpsertVideoRequestDto) : Promise<returnIdResponse>{
+  //비디오 수정하기
+  async updateVideo( video_id : number, req : UpsertVideoRequestDto) : Promise<returnIdResponse>{
     try{
       let video = await this.videoRepository.findOneOrFail({id : video_id});
       video.update(req);

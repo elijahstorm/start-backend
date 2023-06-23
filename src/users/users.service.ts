@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserRepository } from './repository/user.repository';
 import { User } from 'src/entities/User';
 import { ConformAuthEmailRequestDto, JoinRequestDto, SendAuthEmailRequestDto } from './dto/user.request.dto';
-import { returnResponse } from 'src/common/dto/user.dto';
+import { returnResponse } from 'src/common/dto/common.dto';
 import { Return, eTempType } from 'src/common/Enum';
 import moment from 'moment';
 import { TempCodeRepository } from './repository/tempCode.repository';

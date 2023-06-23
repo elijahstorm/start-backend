@@ -53,6 +53,7 @@ export class Song {
         song.cost = req.cost;
         song.video_id = req.video_id;
         song.singer_id = req.singer_id;
+        song.image = req.image;
 
         return song;
     }
@@ -63,6 +64,7 @@ export class Song {
         this.cost = req.cost;
         this.update_date = moment().format('YYYY-MM-DD HH:mm:ss');
         this.singer_id = req.singer_id;
+        this.image = req.image;
 
         return this;
     }
