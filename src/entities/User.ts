@@ -3,7 +3,7 @@ import moment from 'moment';
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Injectable()
-@Entity({ schema: 'user', name: 'user' })
+@Entity({ schema: 'db_start', name: 'user' })
 export class User {
     
     @PrimaryGeneratedColumn({ type: 'bigint', name: 'uid' })

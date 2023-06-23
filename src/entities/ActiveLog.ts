@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Column,  Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
 
 @Injectable()
-@Entity({ schema: 'activelog', name: 'activelog' })
+@Entity({ schema: 'db_start', name: 'activelog' })
 export class ActiveLog {
     
     @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
@@ -25,7 +25,6 @@ export class ActiveLog {
         log.api = api;
         log.request = request;
         log.uid = uid;
-
         return log;
     }
 }

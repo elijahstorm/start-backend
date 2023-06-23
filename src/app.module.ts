@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { PageModule } from './common/page/page.module';
 import { FileModule } from './common/file/file.module';
 import { EmailModule } from './common/email/email.module';
+import { SongModule } from './song/song.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { EmailModule } from './common/email/email.module';
     PageModule,
     FileModule,
     EmailModule,
+    SongModule
   ],
   controllers: [],
   providers: [],

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Column,  Entity, PrimaryColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Injectable()
-@Entity({ schema: 'tag', name: 'tag' })
+@Entity({ schema: 'db_start', name: 'tag' })
 export class Tag {
     
     @PrimaryGeneratedColumn({ type: 'int', name: 'id' })

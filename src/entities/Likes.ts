@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { addLikeRequestDto } from 'src/song/dto/songRequest';
 import { Column,  Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
 
 @Injectable()
-@Entity({ schema: 'likes', name: 'likes' })
+@Entity({ schema: 'db_start', name: 'likes' })
 export class Likes {
     
     @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
@@ -17,5 +18,12 @@ export class Likes {
     @Column('timestamp', { name: 'date', default: () => "CURRENT_TIMESTAMP"})
     date: string;
 
+    public create( req : addLikeRequestDto, uid : number){
+        const like = new Likes;
+        like.uid = uid;
+        like.song_id = req.song_id;
+
+        return like;
+    }
 }
   

@@ -12,7 +12,7 @@ export const typeORMConfig = [
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
     entities: ['./entities/*.{js,ts}'],
-    synchronize: process.env.VER == 'DEV' ? true : false,
+    synchronize: true,
     logging: true,
     keepConnectionAlive: true,
     autoLoadEntities: true,

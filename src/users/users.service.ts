@@ -1,12 +1,12 @@
 import { HttpException, Injectable} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserRepository } from './Repository/user.repository';
+import { UserRepository } from './repository/user.repository';
 import { User } from 'src/entities/User';
 import { ConformAuthEmailRequestDto, JoinRequestDto, SendAuthEmailRequestDto } from './dto/user.request.dto';
 import { returnResponse } from 'src/common/dto/user.dto';
 import { Return, eTempType } from 'src/common/Enum';
 import moment from 'moment';
-import { TempCodeRepository } from './Repository/tempCode.repository';
+import { TempCodeRepository } from './repository/tempCode.repository';
 import { TempCode } from 'src/entities/TempCode';
 import { EmailService } from 'src/common/email/email.service';
 import { ActiveLogRepository } from 'src/common/repository/activelogRepository';

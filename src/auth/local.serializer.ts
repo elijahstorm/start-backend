@@ -3,7 +3,7 @@ import { PassportSerializer } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entities/User';
 import { AuthService } from './auth.service';
-import { UserRepository } from 'src/users/Repository/user.repository';
+import { UserRepository } from 'src/users/repository/user.repository';
 
 @Injectable()
 export class LocalSerializer extends PassportSerializer {

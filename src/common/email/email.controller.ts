@@ -18,6 +18,6 @@ export class emailController {
         @Body() req ,
         @Res() res
         ){  
-            return this.emailService.sendTempPW(req.email, req.password, req.template, req.title);
+            return await this.emailService.sendTempPW(req.email, req.password, req.template, req.title);
     }
 }

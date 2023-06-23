@@ -5,7 +5,7 @@ import { AuthService } from './auth.service';
 import { LocalSerializer } from './local.serializer';
 import { LocalStrategy } from './local.strategy';
 import { User } from 'src/entities/User';
-import { UserRepository } from 'src/users/Repository/user.repository';
+import { UserRepository } from 'src/users/repository/user.repository';
 
 @Module({
   imports: [

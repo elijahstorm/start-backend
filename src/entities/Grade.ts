@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Column,  Entity, PrimaryColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Injectable()
-@Entity({ schema: 'grade', name: 'grade' })
+@Entity({ schema: 'db_start', name: 'grade' })
 export class Grade {
     
     @PrimaryColumn({ type: 'int', name: 'id' })

@@ -14,6 +14,20 @@ export class returnResponse {
     }
 }
 
+
+export class returnIdResponse {
+    @ApiProperty({description: 'success ( 1 : success)'})
+    @Exclude() private readonly success: number;
+
+    @ApiProperty({description: 'id'})
+    @Exclude() private readonly id: number;
+
+    constructor(success : number, id : number) {
+        this.success = Number(success);
+        this.id = Number(id);
+    }
+}
+
 export class returnErrorResponse {
     @ApiProperty({description: 'success ( 1 : success, 0 :fail)'})
     @Exclude() private readonly success: number;
